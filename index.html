@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        #chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            grid-template-rows: repeat(8, 50px);
+            border: 2px solid #333;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+        }
+
+        .dark {
+            background-color: #769656;
+        }
+
+        .light {
+            background-color: #eeeed2;
+        }
+
+        .cell[data-piece] {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="chessboard"></div>
+
+    <script>
+        const pieces = {
+            p: "♟", r: "♜", n: "♞", b: "♝", q: "♛", k: "♚",
+            P: "♙", R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔"
+        };
+
+        const initialBoard = [
+            ["r", "n", "b", "q", "k", "b", "n", "r"],
+            ["p", "p", "p", "p", "p", "p", "p", "p"],
+            ["", "", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", "", ""],
+            ["", "", "", "", "", "", "", ""],
+            ["P", "P", "P", "P", "P", "P", "P", "P"],
+            ["R", "N", "B", "Q", "K", "B", "N", "R"]
+        ];
+
+        let board = initialBoard.map(row => [...row]);
+        let selected = null;
+
+        function createBoard() {
+            const chessboard = document.getElementById('chessboard');
+            chessboard.innerHTML = '';
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    const piece = board[row][col];
+                    if (piece) {
+                        cell.dataset.piece = piece;
+                        cell.innerHTML = pieces[piece];
+                    }
+                    cell.addEventListener('click', () => onCellClick(row, col));
+                    chessboard.appendChild(cell);
+                }
+            }
+        }
+
+        function onCellClick(row, col) {
+            if (selected) {
+                board[row][col] = board[selected.row][selected.col];
+                board[selected.row][selected.col] = '';
+                selected = null;
+                createBoard();
+            } else if (board[row][col]) {
+                selected = { row, col };
+            }
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
